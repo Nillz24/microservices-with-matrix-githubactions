@@ -15,6 +15,10 @@ env:
   REGISTRY: ghcr.io
   USERNAME: Nillz24
 
+concurrency:
+  group: microservices-main
+  cancel-in-progress: false  
+
 jobs:
   gitleaks:
     runs-on: ubuntu-latest
