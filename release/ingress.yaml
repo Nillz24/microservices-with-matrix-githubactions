@@ -12,7 +12,7 @@ metadata:
 spec:
   ingressClassName: alb
   rules:
-    - host: djdjd.shop
+    - host: nillz-dev.com
       http:
         paths:
           - path: /
