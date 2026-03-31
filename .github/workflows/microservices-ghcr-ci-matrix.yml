@@ -6,6 +6,13 @@ on:
     paths-ignore:
       - 'release/'
 
+  workflow_dispatch:
+    inputs:
+      force_full_build:
+        description: "Force build of all services"
+        required: false
+        default: "false"      
+
 permissions:
   contents: write
   packages: write
@@ -138,7 +145,25 @@ jobs:
           [[ "${{ steps.filter.outputs.shippingservice }}" == "true" ]] && SERVICES+=('"shippingservice"')
           [[ "${{ steps.filter.outputs.shoppingassistantservice }}" == "true" ]] && SERVICES+=('"shoppingassistantservice"')
 
-          if [ ${#SERVICES[@]} -eq 0 ]; then
+          FORCE_FULL="${{ github.event.inputs.force_full_build }}"
+          if [ "$FORCE_FULL" = "true" ]; then
+            echo "Force full build triggered"
+            SERVICES=(
+              '"adservice"'
+              '"cartservice"'
+              '"checkoutservice"'
+              '"currencyservice"'
+              '"emailservice"'
+              '"frontend"'
+              '"loadgenerator"'
+              '"paymentservice"'
+              '"productcatalogservice"'
+              '"recommendationservice"'
+              '"shippingservice"'
+              '"shoppingassistantservice"'
+            )
+            HAS_CHANGES=true          
+          else if [ ${#SERVICES[@]} -eq 0 ]; then
             if [ "${{ steps.first-run.outputs.first_run }}" = "true" ]; then
               echo "First run detected. Running all services."
               SERVICES=(
@@ -155,12 +180,12 @@ jobs:
                 '"shippingservice"'
                 '"shoppingassistantservice"'
               )
-              HAS_CHANGES=true
+              HAS_CHANGES=true 
             else
               echo "No service changes detected."
               SERVICES=('"__none__"')
               HAS_CHANGES=false
-            fi
+            fi  
           else
             HAS_CHANGES=true
           fi
