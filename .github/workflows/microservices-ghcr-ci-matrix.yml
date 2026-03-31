@@ -294,9 +294,13 @@ jobs:
           MATRIX='${{ needs.detect-changes.outputs.matrix }}'          
           for svc in $(echo "$MATRIX" | jq -r '.service[]'); do
             yq -i '
-              (.spec.template.spec.containers[] 
+              (.[] 
+              | select(.kind == "Deployment" or .kind == "StatefulSet" or .kind == "DaemonSet") 
+              | select(.spec.template.spec.containers != null) 
+              | .spec.template.spec.containers[] 
               | select(.image | contains("'"$svc"'")) 
-              | .image) = "ghcr.io/nillz24/'"$svc"':'"$SHA"'"
+              | .image
+              ) = "ghcr.io/nillz24/'"$svc"':'"$SHA"'"
             ' release/kubernetes-manifests.yaml
           done
       - name: Commit once
