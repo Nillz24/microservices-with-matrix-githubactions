@@ -295,11 +295,12 @@ jobs:
           for svc in $(echo "$MATRIX" | jq -r '.service[]'); do
             yq -i '
               (.[] 
-              | select(.kind == "Deployment" or .kind == "StatefulSet" or .kind == "DaemonSet") 
-              | select(.spec.template.spec.containers != null) 
-              | .spec.template.spec.containers[] 
-              | select(.image | contains("'"$svc"'")) 
-              | .image
+              | select(
+                  (.kind == "Deployment" or .kind == "StatefulSet" or .kind == "DaemonSet")
+                  and .metadata.name == "'"$svc"'"
+                  and .spec.template.spec.containers != null
+                )
+              | .spec.template.spec.containers[].image
               ) = "ghcr.io/nillz24/'"$svc"':'"$SHA"'"
             ' release/kubernetes-manifests.yaml
           done
