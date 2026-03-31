@@ -163,7 +163,7 @@ jobs:
               '"shoppingassistantservice"'
             )
             HAS_CHANGES=true          
-          else if [ ${#SERVICES[@]} -eq 0 ]; then
+          elif [ ${#SERVICES[@]} -eq 0 ]; then
             if [ "${{ steps.first-run.outputs.first_run }}" = "true" ]; then
               echo "First run detected. Running all services."
               SERVICES=(
