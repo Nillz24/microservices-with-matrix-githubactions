@@ -272,18 +272,33 @@ jobs:
           ref: main
           fetch-depth: 0
 
+#      - name: Update manifest images
+#        run: |
+#          SHA=${GITHUB_SHA}
+#          MATRIX='${{ needs.detect-changes.outputs.matrix }}'
+#          for svc in $(echo "$MATRIX" | jq -r '.service[]'); do
+#            if [ "$svc" = "__none__" ]; then
+#              continue
+#            fi
+#            sed -i "s|ghcr.io/${{ env.USERNAME }}/$svc:.*|ghcr.io/${{ env.USERNAME }}/$svc:${SHA}|g" release/kubernetes-manifests.yaml
+#          done
+
+      - name: Install yq
+        run: |
+          sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq
+          sudo chmod +x /usr/local/bin/yq
+
       - name: Update manifest images
         run: |
           SHA=${GITHUB_SHA}
-          MATRIX='${{ needs.detect-changes.outputs.matrix }}'
-
+          MATRIX='${{ needs.detect-changes.outputs.matrix }}'          
           for svc in $(echo "$MATRIX" | jq -r '.service[]'); do
-            if [ "$svc" = "__none__" ]; then
-              continue
-            fi
-            sed -i "s|ghcr.io/${{ env.USERNAME }}/$svc:.*|ghcr.io/${{ env.USERNAME }}/$svc:${SHA}|g" release/kubernetes-manifests.yaml
+            yq -i '
+              (.spec.template.spec.containers[] 
+              | select(.image | contains("'"$svc"'")) 
+              | .image) = "ghcr.io/nillz24/'"$svc"':'"$SHA"'"
+            ' release/kubernetes-manifests.yaml
           done
-
       - name: Commit once
         run: |
           git config user.name "github-actions"
@@ -297,7 +312,9 @@ jobs:
     name: Deploy to EKS
     runs-on: ubuntu-latest
     needs: update-manifest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: |
+      github.event_name == 'workflow_dispatch' || 
+      github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     permissions:
       id-token: write
