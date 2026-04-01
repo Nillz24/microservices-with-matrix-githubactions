@@ -33,7 +33,7 @@ spec:
                 - ALL
             privileged: false
             readOnlyRootFilesystem: true
-          image: ghcr.io/nillz24/currencyservice:887ad4c5dc9369ad48d142c6a02698aca26db355
+          image: ghcr.io/nillz24/currencyservice:c50d50c2f58084f03e6c36af9ba8bd4f63c735a0
           ports:
             - name: grpc
               containerPort: 7000
@@ -144,7 +144,7 @@ spec:
                 - ALL
             privileged: false
             readOnlyRootFilesystem: true
-          image: ghcr.io/nillz24/loadgenerator:887ad4c5dc9369ad48d142c6a02698aca26db355
+          image: ghcr.io/nillz24/loadgenerator:c50d50c2f58084f03e6c36af9ba8bd4f63c735a0
           env:
             - name: FRONTEND_ADDR
               value: "frontend:80"
@@ -198,7 +198,7 @@ spec:
                 - ALL
             privileged: false
             readOnlyRootFilesystem: true
-          image: ghcr.io/nillz24/productcatalogservice:887ad4c5dc9369ad48d142c6a02698aca26db355
+          image: ghcr.io/nillz24/productcatalogservice:c50d50c2f58084f03e6c36af9ba8bd4f63c735a0
           ports:
             - containerPort: 3550
           env:
@@ -272,7 +272,7 @@ spec:
                 - ALL
             privileged: false
             readOnlyRootFilesystem: true
-          image: ghcr.io/nillz24/checkoutservice:887ad4c5dc9369ad48d142c6a02698aca26db355
+          image: ghcr.io/nillz24/checkoutservice:c50d50c2f58084f03e6c36af9ba8bd4f63c735a0
           ports:
             - containerPort: 5050
           readinessProbe:
@@ -356,7 +356,7 @@ spec:
                 - ALL
             privileged: false
             readOnlyRootFilesystem: true
-          image: ghcr.io/nillz24/shippingservice:887ad4c5dc9369ad48d142c6a02698aca26db355
+          image: ghcr.io/nillz24/shippingservice:c50d50c2f58084f03e6c36af9ba8bd4f63c735a0
           ports:
             - containerPort: 50051
           env:
@@ -432,7 +432,7 @@ spec:
                 - ALL
             privileged: false
             readOnlyRootFilesystem: true
-          image: ghcr.io/nillz24/cartservice:887ad4c5dc9369ad48d142c6a02698aca26db355
+          image: ghcr.io/nillz24/cartservice:c50d50c2f58084f03e6c36af9ba8bd4f63c735a0
           ports:
             - containerPort: 7070
           env:
@@ -577,7 +577,7 @@ spec:
                 - ALL
             privileged: false
             readOnlyRootFilesystem: true
-          image: ghcr.io/nillz24/emailservice:2982d3409659791694ed55a1f12f881ec4d7552a
+          image: ghcr.io/nillz24/emailservice:c50d50c2f58084f03e6c36af9ba8bd4f63c735a0
           ports:
             - containerPort: 8080
           env:
@@ -660,7 +660,7 @@ spec:
                 - ALL
             privileged: false
             readOnlyRootFilesystem: true
-          image: ghcr.io/nillz24/paymentservice:e8fdd88e064f1de344b76ec0fcf29ffc8bd7819f
+          image: ghcr.io/nillz24/paymentservice:c50d50c2f58084f03e6c36af9ba8bd4f63c735a0
           ports:
             - containerPort: 50051
           env:
@@ -736,7 +736,7 @@ spec:
                 - ALL
             privileged: false
             readOnlyRootFilesystem: true
-          image: ghcr.io/nillz24/frontend:6ddc9ef0f082c8f1cc7e668f6f2a03918fa7da0a
+          image: ghcr.io/nillz24/frontend:c50d50c2f58084f03e6c36af9ba8bd4f63c735a0
           ports:
             - containerPort: 8080
           readinessProbe:
@@ -865,7 +865,7 @@ spec:
                 - ALL
             privileged: false
             readOnlyRootFilesystem: true
-          image: ghcr.io/nillz24/recommendationservice:887ad4c5dc9369ad48d142c6a02698aca26db355
+          image: ghcr.io/nillz24/recommendationservice:c50d50c2f58084f03e6c36af9ba8bd4f63c735a0
           ports:
             - containerPort: 8080
           readinessProbe:
@@ -944,7 +944,7 @@ spec:
                 - ALL
             privileged: false
             readOnlyRootFilesystem: true
-          image: ghcr.io/nillz24/adservice:b1f9443439dd196893b88a1bf7cf482ecfc6dc46
+          image: ghcr.io/nillz24/adservice:c50d50c2f58084f03e6c36af9ba8bd4f63c735a0
           ports:
             - containerPort: 9555
           env:
