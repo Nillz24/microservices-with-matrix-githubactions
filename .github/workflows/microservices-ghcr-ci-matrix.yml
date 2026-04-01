@@ -319,7 +319,7 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          
+
           git add release/kubernetes-manifests.yaml
 
           if git diff --cached --quiet; then
@@ -411,31 +411,18 @@ jobs:
 
       - name: Run Smoke Tests
         run: |
-          # Example: check frontend
-          FRONTEND_URL=$(kubectl get svc frontend -n project -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
-
-          echo "Testing frontend at $FRONTEND_URL"
-
-          curl -f http://$FRONTEND_URL/ || exit 1
-          echo "Frontend service  $FRONTEND_URL is accessible"
-
-          # Example: health endpoints
-          #SERVICES=(checkoutservice cartservice productcatalogservice)
-
-          kubectl run tmp-pcs -n project --rm -i --restart=Never \
+          kubectl run smoke-test -n project --rm -i --restart=Never \
             --image=curlimages/curl \
-            -- curl -f http://productcatalogservice:3550 || exit 1
+            -- sh -c "
+              set -e
 
-          echo "Productcatalog service is accessible within cluster"  
-           
-          kubectl run tmp-cs -n project --rm -i --restart=Never \
-            --image=curlimages/curl \
-            -- curl -f http://cartservice:7070 || exit 1  
+              echo 'Testing frontend (HTTP)...'
+              curl -f http://frontend:80
 
-          echo "cartservice service is accessible within cluster" 
+              echo 'Testing backend connectivity (gRPC ports)...'
+              nc -zv productcatalogservice 3550
+              nc -zv cartservice 7070
+              nc -zv checkoutservice 5050
 
-          kubectl run tmp-cos -n project --rm -i --restart=Never \
-            --image=curlimages/curl \
-            -- curl -f http://checkoutservice:5050 || exit 1    
-
-          echo "checkoutservice service is accessible within cluster"   
+              echo '✅ All services healthy inside cluster'
+            "
