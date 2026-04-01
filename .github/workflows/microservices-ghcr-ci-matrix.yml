@@ -290,28 +290,48 @@ jobs:
 
       - name: Update manifest images
         run: |
+          set -euo pipefail
+
           SHA=${GITHUB_SHA}
-          MATRIX='${{ needs.detect-changes.outputs.matrix }}'          
+          MATRIX='${{ needs.detect-changes.outputs.matrix }}'
+          FILE="release/kubernetes-manifests.yaml"
+          echo "Using SHA: $SHA"
+
           for svc in $(echo "$MATRIX" | jq -r '.service[]'); do
+            echo "Processing service: $svc"
             yq -i '
-              (.[] 
-              | select(
+              (
+                select(
                   (.kind == "Deployment" or .kind == "StatefulSet" or .kind == "DaemonSet")
-                  and .metadata.name == "'"$svc"'"
-                  and .spec.template.spec.containers != null
+                  and (.metadata.name == "'"$svc"'")
+                  and (.spec.template.spec.containers != null)
                 )
-              | .spec.template.spec.containers[].image
+                | .spec.template.spec.containers[].image
               ) = "ghcr.io/nillz24/'"$svc"':'"$SHA"'"
-            ' release/kubernetes-manifests.yaml
+            ' "$FILE"
+
           done
+
+          echo "---- Updated images ----"
+          grep "image:" "$FILE" || true
+
       - name: Commit once
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add release/kubernetes-manifests.yaml
-          git commit -m "update changed service images ${GITHUB_SHA}" || echo "no change"
-          git pull --rebase origin main
-          git push origin main
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          git commit -m "Update images to SHA ${GITHUB_SHA}"
+
+          # Retry push up to 3 times
+          for i in 1 2 3; do
+            git push && break
+            echo "Push failed, retrying ($i)..."
+            git pull --rebase origin main
+          done
 
   deploy-to-k8s:
     name: Deploy to EKS
