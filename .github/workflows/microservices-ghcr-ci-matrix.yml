@@ -403,7 +403,7 @@ jobs:
 
           for deploy in "${deployments[@]}"; do
             echo "Checking rollout for $deploy..."
-            kubectl rollout status deployment/"$deploy" -n "${K8S_NAMESPACE}" --timeout=300s
+            kubectl rollout status deployment/"$deploy" -n "${K8S_NAMESPACE}" --timeout=400s
           done
 
       - name: Run Smoke Tests
